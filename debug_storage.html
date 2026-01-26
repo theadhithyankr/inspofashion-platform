@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LocalStorage Test</title>
+</head>
+<body>
+    <h1>Browser Storage Test</h1>
+    <button onclick="testStorage()">Test Storage</button>
+    <button onclick="checkSupabase()">Check Supabase Keys</button>
+    <pre id="result"></pre>
+
+    <script>
+        function testStorage() {
+            const result = document.getElementById('result');
+            let output = '';
+
+            // Test localStorage availability
+            try {
+                localStorage.setItem('test', 'value');
+                output += '✅ localStorage.setItem works\n';
+                
+                const val = localStorage.getItem('test');
+                output += `✅ localStorage.getItem works: ${val}\n`;
+                
+                localStorage.removeItem('test');
+                output += '✅ localStorage.removeItem works\n\n';
+            } catch (e) {
+                output += `❌ localStorage error: ${e.message}\n\n`;
+            }
+
+            // Check browser info
+            output += `Browser: ${navigator.userAgent}\n`;
+            output += `Cookies enabled: ${navigator.cookieEnabled}\n`;
+            output += `Storage quota: checking...\n`;
+
+            if (navigator.storage && navigator.storage.estimate) {
+                navigator.storage.estimate().then(estimate => {
+                    output += `\nStorage used: ${(estimate.usage / 1024 / 1024).toFixed(2)} MB\n`;
+                    output += `Storage quota: ${(estimate.quota / 1024 / 1024).toFixed(2)} MB\n`;
+                    result.textContent = output;
+                });
+            }
+
+            result.textContent = output;
+        }
+
+        function checkSupabase() {
+            const result = document.getElementById('result');
+            let output = 'Supabase Auth Keys in localStorage:\n\n';
+
+            const keys = Object.keys(localStorage).filter(k => 
+                k.startsWith('sb-') || k.includes('supabase')
+            );
+
+            if (keys.length === 0) {
+                output += '❌ No Supabase keys found!\n';
+                output += 'This means sessions are NOT persisting.\n\n';
+                output += 'Possible causes:\n';
+                output += '- Incognito mode\n';
+                output += '- Browser extensions blocking storage\n';
+                output += '- Privacy settings too strict\n';
+            } else {
+                output += `✅ Found ${keys.length} Supabase key(s):\n\n`;
+                keys.forEach(key => {
+                    const value = localStorage.getItem(key);
+                    output += `${key}:\n`;
+                    output += `  Length: ${value?.length || 0} chars\n\n`;
+                });
+            }
+
+            output += '\n\nAll localStorage keys:\n';
+            Object.keys(localStorage).forEach(key => {
+                output += `- ${key}\n`;
+            });
+
+            result.textContent = output;
+        }
+    </script>
+</body>
+</html>

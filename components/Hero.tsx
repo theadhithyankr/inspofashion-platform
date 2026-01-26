@@ -60,7 +60,7 @@ const Hero: React.FC = () => {
 
         {/* Desktop Scrolling Text/Ticker at bottom */}
         <div className="absolute bottom-0 left-0 right-0 bg-white text-black py-3 overflow-hidden whitespace-nowrap z-10 border-t border-gray-200">
-          <div className="flex animate-marquee gap-12 font-bold tracking-widest uppercase text-sm">
+          <div className="animate-marquee gap-12 font-bold tracking-widest uppercase text-sm">
              <span>Free Shipping on Orders Over ₹2000</span>
              <span>•</span>
              <span>New Styles Added Daily</span>
@@ -72,6 +72,11 @@ const Hero: React.FC = () => {
              <span>Free Shipping on Orders Over ₹2000</span>
              <span>•</span>
              <span>New Styles Added Daily</span>
+             <span>•</span>
+             <span>Easy 7-Day Returns</span>
+             <span>•</span>
+             <span>COD Available Everywhere</span>
+             <span>•</span>
           </div>
         </div>
       </div>

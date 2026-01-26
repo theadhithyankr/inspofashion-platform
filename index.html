@@ -46,6 +46,21 @@
         -ms-overflow-style: none;  /* IE and Edge */
         scrollbar-width: none;  /* Firefox */
       }
+      
+      /* Marquee scrolling animation */
+      @keyframes marquee {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+      
+      .animate-marquee {
+        display: inline-flex;
+        animation: marquee 20s linear infinite;
+      }
     </style>
   <script type="importmap">
 {
@@ -60,5 +75,6 @@
 </head>
   <body class="bg-brand-white text-brand-black antialiased selection:bg-brand-black selection:text-white">
     <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
