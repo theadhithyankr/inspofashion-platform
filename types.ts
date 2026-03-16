@@ -10,12 +10,25 @@ export interface Product {
   isSale?: boolean;
   rating: number;
   reviewCount: number;
+  sizes?: string[]; 
 }
 
 export interface Category {
   id: string;
   name: string;
+  slug: string; // Added Slug
+  description?: string;
   image: string;
+}
+
+export interface Collection {
+  id: string;
+  title: string;
+  slug: string;
+  description?: string;
+  image?: string;
+  status: 'active' | 'draft' | 'archived';
+  product_count?: number;
 }
 
 export interface CartItem extends Product {

@@ -47,7 +47,7 @@ export default function DashboardPage() {
                 if (customerError) throw customerError;
 
                 // Calculate Metrics
-                const totalRevenue = allOrders?.reduce((sum, order) => sum + (order.total || 0), 0) || 0;
+                const totalRevenue = allOrders?.reduce((sum, order) => sum + (order.total_amount || 0), 0) || 0;
                 const totalOrders = allOrders?.length || 0;
                 const avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
@@ -132,15 +132,15 @@ export default function DashboardPage() {
                                     ) : (
                                         recentOrders.map((order) => (
                                             <tr key={order.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                                                <td className="py-4 pl-2 font-mono text-gray-500">#{order.order_number || order.id.slice(0, 8)}</td>
+                                                <td className="py-4 pl-2 font-mono text-gray-500">#{order.id.slice(0, 8)}</td>
                                                 <td className="py-4 font-bold">{order.profiles?.full_name || 'Guest'}</td>
-                                                <td className="py-4">₹{order.total}</td>
+                                                <td className="py-4">₹{order.total_amount}</td>
                                                 <td className="py-4">
                                                     <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide
-                            ${order.order_status === 'delivered' ? 'bg-green-100 text-green-700' :
-                                                            order.order_status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                            ${order.status === 'delivered' ? 'bg-green-100 text-green-700' :
+                                                            order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                                                                 'bg-gray-100 text-gray-700'}`}>
-                                                        {order.order_status}
+                                                        {order.status}
                                                     </span>
                                                 </td>
                                                 <td className="py-4 text-gray-400">{new Date(order.created_at).toLocaleDateString()}</td>

@@ -79,13 +79,13 @@ export default function OrdersPage() {
                             ) : (
                                 orders.map((order) => (
                                     <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-                                        <td className="px-6 py-4 font-mono text-gray-500">#{order.order_number || order.id.slice(0, 8)}</td>
+                                        <td className="px-6 py-4 font-mono text-gray-500">#{order.id.slice(0, 8)}</td>
                                         <td className="px-6 py-4 font-medium">
                                             <div>{order.profiles?.full_name || 'Guest'}</div>
                                             <div className="text-xs text-gray-400 font-normal">{order.profiles?.email}</div>
                                         </td>
                                         <td className="px-6 py-4 text-gray-500 text-sm">{new Date(order.created_at).toLocaleDateString()}</td>
-                                        <td className="px-6 py-4 font-medium">₹{order.total}</td>
+                                        <td className="px-6 py-4 font-medium">₹{order.total_amount}</td>
                                         <td className="px-6 py-4 text-sm">
                                             <span className={`px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wide
                         ${order.payment_status === 'paid' ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'}`}>
@@ -94,11 +94,11 @@ export default function OrdersPage() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={`px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wide
-                        ${order.order_status === 'delivered' ? 'bg-green-100 text-green-700' :
-                                                    order.order_status === 'processing' ? 'bg-blue-100 text-blue-700' :
-                                                        order.order_status === 'shipped' ? 'bg-purple-100 text-purple-700' :
+                        ${order.status === 'delivered' ? 'bg-green-100 text-green-700' :
+                                                    order.status === 'processing' ? 'bg-blue-100 text-blue-700' :
+                                                        order.status === 'shipped' ? 'bg-purple-100 text-purple-700' :
                                                             'bg-yellow-100 text-yellow-700'}`}>
-                                                {order.order_status}
+                                                {order.status}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right">

@@ -191,6 +191,15 @@ export default function LoginPage() {
                             </button>
                         </p>
                     </div>
+
+                    <div className="mt-6 text-center border-t border-gray-100 pt-6">
+                        <button
+                            onClick={() => navigate('/admin/login')}
+                            className="text-xs font-semibold text-gray-400 hover:text-black transition-colors uppercase tracking-widest"
+                        >
+                            Admin Access
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

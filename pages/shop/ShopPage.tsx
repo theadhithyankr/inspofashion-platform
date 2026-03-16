@@ -7,9 +7,10 @@ import ProductCard from '../../components/ProductCard';
 import CartDrawer from '../../components/CartDrawer';
 import Footer from '../../components/Footer';
 import AuthModal from '../../components/auth/AuthModal';
-import { PRODUCTS, CATEGORIES } from '../../constants';
+import { PRODUCTS, CATEGORIES } from '../../constants'; // Retain CATEGORIES, PRODUCTS is fallback
 import { Product, CartItem } from '../../types';
 import { MessageCircle } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 interface ShopPageProps {
   user?: any;
@@ -20,6 +21,55 @@ export default function ShopPage({ user }: ShopPageProps) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch products from Supabase
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('status', 'active')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+          const mappedProducts: Product[] = data.map(dbProduct => ({
+            id: dbProduct.id,
+            name: dbProduct.title || dbProduct.name, // Fallback to name if title is missing
+            price: Number(dbProduct.price),
+            originalPrice: dbProduct.compare_at_price ? Number(dbProduct.compare_at_price) : undefined,
+            image: dbProduct.images && dbProduct.images[0] ? dbProduct.images[0] : 'https://placehold.co/600x800?text=No+Image',
+            secondaryImage: dbProduct.images && dbProduct.images[1] ? dbProduct.images[1] : undefined,
+            category: dbProduct.category || 'Uncategorized',
+            isNew: (new Date().getTime() - new Date(dbProduct.created_at).getTime()) / (1000 * 3600 * 24) < 7, // New if < 7 days
+            isSale: false, // Add sale logic later if needed
+            rating: 5, // Placeholder
+            reviewCount: 0 // Placeholder
+          }));
+          setProducts(mappedProducts);
+        } else {
+             // Fallback to dummy data if DB is empty so the site doesn't look broken initially
+             // Or keep it empty. User said "cant see it", implying they expect to see *their* products.
+             // Better to show empty state or just their products if any exist.
+             // If DB is empty, user might think it's broken if they expect the dummy data.
+             // But usually once DB is connected, we want real data.
+             // Let's stick to real data for "products" state, but maybe fallback if loading fails?
+             // No, let's show real data.
+             setProducts([]); 
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProducts();
+  }, []);
 
   // Prevent background scroll when cart is open
   useEffect(() => {
@@ -124,13 +174,24 @@ export default function ShopPage({ user }: ShopPageProps) {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-10 md:gap-x-6">
-              {PRODUCTS.map(product => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onAddToCart={addToCart}
-                />
-              ))}
+              {loading ? (
+                <div className="col-span-full py-20 text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+                  <p className="text-gray-500 font-medium">Loading products...</p>
+                </div>
+              ) : products.length > 0 ? (
+                products.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onAddToCart={() => addToCart(product)}
+                  />
+                ))
+              ) : (
+                <div className="col-span-full py-20 text-center text-gray-500 font-medium">
+                  No products found. Be the first to add one!
+                </div>
+              )}
             </div>
 
             <div className="mt-16 text-center lg:hidden">

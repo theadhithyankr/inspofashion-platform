@@ -9,7 +9,9 @@ import {
     Settings,
     LogOut,
     Palette,
-    Globe
+    Globe,
+    Tag,
+    GalleryHorizontal
 } from 'lucide-react';
 import { signOut } from '../../../lib/auth';
 
@@ -24,6 +26,8 @@ export default function AdminSidebar() {
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
         { icon: ShoppingBag, label: 'Products', path: '/admin/products' },
+        { icon: Tag, label: 'Categories', path: '/admin/categories' },
+        { icon: GalleryHorizontal, label: 'Collections', path: '/admin/collections' },
         { icon: ShoppingCart, label: 'Orders', path: '/admin/orders' },
         { icon: Users, label: 'Customers', path: '/admin/customers' },
         { icon: BarChart2, label: 'Analytics', path: '/admin/analytics' },

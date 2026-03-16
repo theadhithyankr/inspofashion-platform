@@ -3,14 +3,20 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { supabase } from './lib/supabase';
 import { getUserRole } from './lib/auth';
 import LoginPage from './pages/LoginPage';
+import AdminLoginPage from './pages/admin/AdminLoginPage';
 
 import ProfilePage from './pages/ProfilePage';
 import ShopPage from './pages/shop/ShopPage';
 import AdminLayout from './components/admin/layout/AdminLayout';
 import DashboardPage from './pages/admin/DashboardPage';
 import ProductsPage from './pages/admin/ProductsPage';
+import CollectionsPage from './pages/admin/CollectionsPage';
+import CategoriesPage from './pages/admin/CategoriesPage';
 import OrdersPage from './pages/admin/OrdersPage';
 import CustomersPage from './pages/admin/CustomersPage';
+import AnalyticsPage from './pages/admin/AnalyticsPage';
+import AppearancePage from './pages/admin/AppearancePage';
+import SettingsPage from './pages/admin/SettingsPage';
 
 export default function App() {
   const [user, setUser] = useState<any>(null);
@@ -101,14 +107,20 @@ export default function App() {
         {/* Login & Signup Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<LoginPage />} />
+        <Route path="/admin/login" element={<AdminLoginPage />} />
 
         {/* Admin routes */}
         {/* {role === 'admin' && ( */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardPage />} />
           <Route path="products" element={<ProductsPage />} />
+          <Route path="collections" element={<CollectionsPage />} />
+          <Route path="categories" element={<CategoriesPage />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="customers" element={<CustomersPage />} />
+          <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="appearance" element={<AppearancePage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
         {/* )} */}
 

@@ -12,25 +12,25 @@ export interface Database {
             profiles: {
                 Row: {
                     id: string
-                    email: string
+                    email: string | null
                     full_name: string | null
-                    role: 'customer' | 'admin' | 'manager' | 'support'
+                    role: 'customer' | 'admin' | 'staff'
                     created_at: string
                     updated_at: string
                 }
                 Insert: {
                     id: string
-                    email: string
+                    email?: string | null
                     full_name?: string | null
-                    role?: 'customer' | 'admin' | 'manager' | 'support'
+                    role?: 'customer' | 'admin' | 'staff'
                     created_at?: string
                     updated_at?: string
                 }
                 Update: {
                     id?: string
-                    email?: string
+                    email?: string | null
                     full_name?: string | null
-                    role?: 'customer' | 'admin' | 'manager' | 'support'
+                    role?: 'customer' | 'admin' | 'staff'
                     created_at?: string
                     updated_at?: string
                 }
@@ -39,57 +39,45 @@ export interface Database {
                 Row: {
                     id: string
                     title: string
-                    description: string | null
                     slug: string
                     sku: string
+                    description: string | null
                     price: number
-                    compare_at_price: number | null
-                    images: string[]
-                    category: string
-                    collections: string[]
-                    tags: string[]
-                    featured: boolean
-                    status: 'active' | 'draft' | 'out_of_stock'
+                    category: string | null
                     stock_quantity: number
-                    low_stock_threshold: number
+                    images: string[] | null
+                    sizes: string[] | null
+                    status: 'active' | 'draft' | 'archived'
                     created_at: string
                     updated_at: string
                 }
                 Insert: {
                     id?: string
                     title: string
-                    description?: string | null
                     slug: string
                     sku: string
+                    description?: string | null
                     price: number
-                    compare_at_price?: number | null
-                    images?: string[]
-                    category: string
-                    collections?: string[]
-                    tags?: string[]
-                    featured?: boolean
-                    status?: 'active' | 'draft' | 'out_of_stock'
+                    category?: string | null
                     stock_quantity?: number
-                    low_stock_threshold?: number
+                    images?: string[] | null
+                    sizes?: string[] | null
+                    status?: 'active' | 'draft' | 'archived'
                     created_at?: string
                     updated_at?: string
                 }
                 Update: {
                     id?: string
                     title?: string
-                    description?: string | null
                     slug?: string
                     sku?: string
+                    description?: string | null
                     price?: number
-                    compare_at_price?: number | null
-                    images?: string[]
-                    category?: string
-                    collections?: string[]
-                    tags?: string[]
-                    featured?: boolean
-                    status?: 'active' | 'draft' | 'out_of_stock'
+                    category?: string | null
                     stock_quantity?: number
-                    low_stock_threshold?: number
+                    images?: string[] | null
+                    sizes?: string[] | null
+                    status?: 'active' | 'draft' | 'archived'
                     created_at?: string
                     updated_at?: string
                 }
@@ -97,54 +85,59 @@ export interface Database {
             orders: {
                 Row: {
                     id: string
-                    order_number: string
                     user_id: string
-                    subtotal: number
-                    shipping: number
-                    discount: number
-                    tax: number
-                    total: number
-                    payment_method: 'upi' | 'card' | 'net_banking' | 'cod' | 'wallet' | null
-                    payment_status: 'pending' | 'paid' | 'failed' | 'cod_pending' | 'refunded'
-                    order_status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'out_for_delivery' | 'delivered' | 'cancelled' | 'returned'
-                    tracking_number: string | null
-                    courier_partner: string | null
+                    status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
+                    total_amount: number
+                    shipping_address: Json | null
+                    payment_status: 'pending' | 'paid' | 'failed'
                     created_at: string
                     updated_at: string
                 }
                 Insert: {
                     id?: string
-                    order_number: string
                     user_id: string
-                    subtotal: number
-                    shipping?: number
-                    discount?: number
-                    tax: number
-                    total: number
-                    payment_method?: 'upi' | 'card' | 'net_banking' | 'cod' | 'wallet' | null
-                    payment_status?: 'pending' | 'paid' | 'failed' | 'cod_pending' | 'refunded'
-                    order_status?: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'out_for_delivery' | 'delivered' | 'cancelled' | 'returned'
-                    tracking_number?: string | null
-                    courier_partner?: string | null
+                    status?: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
+                    total_amount: number
+                    shipping_address?: Json | null
+                    payment_status?: 'pending' | 'paid' | 'failed'
                     created_at?: string
                     updated_at?: string
                 }
                 Update: {
                     id?: string
-                    order_number?: string
                     user_id?: string
-                    subtotal?: number
-                    shipping?: number
-                    discount?: number
-                    tax?: number
-                    total?: number
-                    payment_method?: 'upi' | 'card' | 'net_banking' | 'cod' | 'wallet' | null
-                    payment_status?: 'pending' | 'paid' | 'failed' | 'cod_pending' | 'refunded'
-                    order_status?: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'out_for_delivery' | 'delivered' | 'cancelled' | 'returned'
-                    tracking_number?: string | null
-                    courier_partner?: string | null
+                    status?: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
+                    total_amount?: number
+                    shipping_address?: Json | null
+                    payment_status?: 'pending' | 'paid' | 'failed'
                     created_at?: string
                     updated_at?: string
+                }
+            }
+            order_items: {
+                Row: {
+                    id: string
+                    order_id: string
+                    product_id: string
+                    quantity: number
+                    price_at_purchase: number
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    order_id: string
+                    product_id: string
+                    quantity: number
+                    price_at_purchase: number
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    order_id?: string
+                    product_id?: string
+                    quantity?: number
+                    price_at_purchase?: number
+                    created_at?: string
                 }
             }
         }
