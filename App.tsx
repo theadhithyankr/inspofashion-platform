@@ -34,13 +34,18 @@ export default function App() {
     }
 
     // Check current session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const initializeAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
       if (session?.user) {
-        getUserRole().then(setRole);
+        const userRole = await getUserRole();
+        setRole(userRole);
+      } else {
+        setRole(null);
       }
       setLoading(false);
-    });
+    };
+    initializeAuth();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -107,11 +112,10 @@ export default function App() {
         {/* Login & Signup Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<LoginPage />} />
-        <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route path="/admin/login" element={user && role === 'admin' ? <Navigate to="/admin" replace /> : <AdminLoginPage />} />
 
         {/* Admin routes */}
-        {/* {role === 'admin' && ( */}
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/admin" element={user && role === 'admin' ? <AdminLayout /> : <Navigate to="/admin/login" replace />}>
           <Route index element={<DashboardPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="collections" element={<CollectionsPage />} />
@@ -122,7 +126,6 @@ export default function App() {
           <Route path="appearance" element={<AppearancePage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
-        {/* )} */}
 
         {/* Catch all - redirect to home */}
         <Route path="*" element={<Navigate to="/" replace />} />

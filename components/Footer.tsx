@@ -1,7 +1,9 @@
 import React from 'react';
 import { Facebook, Instagram, Twitter, Youtube } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
+  const categoryLink = (category: string) => `/?category=${encodeURIComponent(category)}#products-section`;
   return (
     <footer className="bg-black text-white pt-16 pb-24 lg:pb-16 border-t border-gray-900 rounded-t-[3rem]">
       <div className="container mx-auto px-6 max-w-[1400px]">
@@ -26,46 +28,46 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="font-bold uppercase tracking-widest text-sm mb-6 text-gray-200">Shop</h4>
             <ul className="space-y-4 text-sm text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Women</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Men</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Curve</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Kids</a></li>
-              <li><a href="#" className="hover:text-white transition-colors font-bold text-white hover:underline">Sale</a></li>
+              <li><Link to={categoryLink('women')} className="hover:text-white transition-colors hover:underline">Women</Link></li>
+              <li><Link to={categoryLink('men')} className="hover:text-white transition-colors hover:underline">Men</Link></li>
+              <li><Link to={categoryLink('curve')} className="hover:text-white transition-colors hover:underline">Curve</Link></li>
+              <li><Link to={categoryLink('kids')} className="hover:text-white transition-colors hover:underline">Kids</Link></li>
+              <li><Link to={categoryLink('sale')} className="hover:text-white transition-colors font-bold text-white hover:underline">Sale</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="font-bold uppercase tracking-widest text-sm mb-6 text-gray-200">Help</h4>
             <ul className="space-y-4 text-sm text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Order Status</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Delivery Info</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Returns</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Size Guide</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Contact Us</a></li>
+              <li><Link to="/profile" className="hover:text-white transition-colors hover:underline">Order Status</Link></li>
+              <li><a href="https://wa.me/919999999999" target="_blank" rel="noreferrer" className="hover:text-white transition-colors hover:underline">Delivery Info</a></li>
+              <li><a href="https://wa.me/919999999999" target="_blank" rel="noreferrer" className="hover:text-white transition-colors hover:underline">Returns</a></li>
+              <li><a href="https://wa.me/919999999999" target="_blank" rel="noreferrer" className="hover:text-white transition-colors hover:underline">Size Guide</a></li>
+              <li><a href="https://wa.me/919999999999" target="_blank" rel="noreferrer" className="hover:text-white transition-colors hover:underline">Contact Us</a></li>
             </ul>
           </div>
           <div>
             <h4 className="font-bold uppercase tracking-widest text-sm mb-6 text-gray-200">Company</h4>
             <ul className="space-y-4 text-sm text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">About Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Careers</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Sustainability</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-white transition-colors hover:underline">Privacy Policy</a></li>
+              <li><Link to="/" className="hover:text-white transition-colors hover:underline">About Us</Link></li>
+              <li><Link to="/" className="hover:text-white transition-colors hover:underline">Careers</Link></li>
+              <li><Link to="/" className="hover:text-white transition-colors hover:underline">Sustainability</Link></li>
+              <li><Link to="/" className="hover:text-white transition-colors hover:underline">Terms of Service</Link></li>
+              <li><Link to="/" className="hover:text-white transition-colors hover:underline">Privacy Policy</Link></li>
             </ul>
           </div>
           <div className="col-span-2 md:col-span-1">
             <h4 className="font-bold uppercase tracking-widest text-sm mb-6 text-gray-200">Connect</h4>
             <div className="flex gap-4 mb-8">
-              <a href="#" className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300">
+              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300">
                 <Instagram size={20} />
               </a>
-              <a href="#" className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300">
+              <a href="https://facebook.com" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300">
                 <Facebook size={20} />
               </a>
-              <a href="#" className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300">
+              <a href="https://x.com" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300">
                 <Twitter size={20} />
               </a>
-              <a href="#" className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300">
+              <a href="https://youtube.com" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300">
                 <Youtube size={20} />
               </a>
             </div>

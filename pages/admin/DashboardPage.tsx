@@ -3,9 +3,15 @@ import { TrendingUp, ShoppingBag, Users, DollarSign } from 'lucide-react';
 import AdminHeader from '../../components/admin/layout/AdminHeader';
 import { supabase } from '../../lib/supabase';
 import { Database } from '../../lib/database.types';
+import { Link } from 'react-router-dom';
 
 type Order = Database['public']['Tables']['orders']['Row'];
-type Product = Database['public']['Tables']['products']['Row'];
+type TopProduct = {
+    id: string;
+    title: string;
+    image: string | null;
+    soldCount: number;
+};
 
 export default function DashboardPage() {
     const [metrics, setMetrics] = useState({
@@ -15,6 +21,7 @@ export default function DashboardPage() {
         avgOrderValue: 0
     });
     const [recentOrders, setRecentOrders] = useState<(Order & { profiles: { full_name: string } | null })[]>([]);
+    const [topProducts, setTopProducts] = useState<TopProduct[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -34,7 +41,7 @@ export default function DashboardPage() {
                 // Fetch all orders for aggregation
                 const { data: allOrders, error: allOrdersError } = await supabase
                     .from('orders')
-                    .select('total');
+                    .select('total_amount');
 
                 if (allOrdersError) throw allOrdersError;
 
@@ -45,6 +52,12 @@ export default function DashboardPage() {
                     .eq('role', 'customer');
 
                 if (customerError) throw customerError;
+
+                const { data: orderItems, error: orderItemsError } = await supabase
+                    .from('order_items')
+                    .select('product_id, quantity');
+
+                if (orderItemsError) throw orderItemsError;
 
                 // Calculate Metrics
                 const totalRevenue = allOrders?.reduce((sum, order) => sum + (order.total_amount || 0), 0) || 0;
@@ -60,6 +73,40 @@ export default function DashboardPage() {
 
                 // @ts-ignore - Supabase types join fix
                 setRecentOrders(orders || []);
+
+                const soldByProductId: Record<string, number> = {};
+                (orderItems || []).forEach((item) => {
+                    soldByProductId[item.product_id] = (soldByProductId[item.product_id] || 0) + item.quantity;
+                });
+                const rankedProductIds = Object.entries(soldByProductId)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5)
+                    .map(([productId]) => productId);
+
+                if (rankedProductIds.length > 0) {
+                    const { data: productsData, error: productsError } = await supabase
+                        .from('products')
+                        .select('id, title, images')
+                        .in('id', rankedProductIds);
+                    if (productsError) throw productsError;
+
+                    const mappedTopProducts = rankedProductIds
+                        .map((productId) => {
+                            const product = (productsData || []).find((p) => p.id === productId);
+                            if (!product) return null;
+                            return {
+                                id: product.id,
+                                title: product.title,
+                                image: product.images && product.images[0] ? product.images[0] : null,
+                                soldCount: soldByProductId[productId]
+                            };
+                        })
+                        .filter(Boolean) as TopProduct[];
+
+                    setTopProducts(mappedTopProducts);
+                } else {
+                    setTopProducts([]);
+                }
 
             } catch (error) {
                 console.error('Error fetching dashboard data:', error);
@@ -110,7 +157,7 @@ export default function DashboardPage() {
                     <div className="lg:col-span-2 bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
                         <div className="flex justify-between items-center mb-6">
                             <h3 className="font-display font-bold text-lg uppercase tracking-wide">Recent Orders</h3>
-                            <button className="text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-black">View All</button>
+                            <Link to="/admin/orders" className="text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-black">View All</Link>
                         </div>
 
                         <div className="overflow-x-auto">
@@ -158,7 +205,27 @@ export default function DashboardPage() {
                             <h3 className="font-display font-bold text-lg uppercase tracking-wide">Top Products</h3>
                         </div>
                         <div className="space-y-6">
-                            <p className="text-sm text-gray-400 italic">Coming soon with more data...</p>
+                            {loading ? (
+                                <p className="text-sm text-gray-400 italic">Loading top products...</p>
+                            ) : topProducts.length === 0 ? (
+                                <p className="text-sm text-gray-400 italic">No sales data yet.</p>
+                            ) : (
+                                topProducts.map((product) => (
+                                    <div key={product.id} className="flex items-center justify-between gap-3">
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100">
+                                                {product.image ? (
+                                                    <img src={product.image} alt={product.title} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full bg-gray-200" />
+                                                )}
+                                            </div>
+                                            <p className="text-sm font-medium truncate">{product.title}</p>
+                                        </div>
+                                        <span className="text-xs font-bold text-gray-500 whitespace-nowrap">{product.soldCount} sold</span>
+                                    </div>
+                                ))
+                            )}
                         </div>
                     </div>
 

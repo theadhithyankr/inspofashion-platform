@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Navigation from '../../components/Navigation';
 import MobileBottomNav from '../../components/MobileBottomNav';
 import Hero from '../../components/Hero';
@@ -7,7 +7,7 @@ import ProductCard from '../../components/ProductCard';
 import CartDrawer from '../../components/CartDrawer';
 import Footer from '../../components/Footer';
 import AuthModal from '../../components/auth/AuthModal';
-import { PRODUCTS, CATEGORIES } from '../../constants'; // Retain CATEGORIES, PRODUCTS is fallback
+import { CATEGORIES } from '../../constants';
 import { Product, CartItem } from '../../types';
 import { MessageCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -18,11 +18,19 @@ interface ShopPageProps {
 
 export default function ShopPage({ user }: ShopPageProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const category = params.get('category');
+    setSelectedCategory(category ? category.toLowerCase() : null);
+  }, [location.search]);
 
   // Fetch products from Supabase
   useEffect(() => {
@@ -32,7 +40,8 @@ export default function ShopPage({ user }: ShopPageProps) {
           .from('products')
           .select('*')
           .eq('status', 'active')
-          .order('created_at', { ascending: false });
+          .order('created_at', { ascending: false })
+          .limit(50);
 
         if (error) throw error;
 
@@ -46,21 +55,14 @@ export default function ShopPage({ user }: ShopPageProps) {
             secondaryImage: dbProduct.images && dbProduct.images[1] ? dbProduct.images[1] : undefined,
             category: dbProduct.category || 'Uncategorized',
             isNew: (new Date().getTime() - new Date(dbProduct.created_at).getTime()) / (1000 * 3600 * 24) < 7, // New if < 7 days
-            isSale: false, // Add sale logic later if needed
-            rating: 5, // Placeholder
-            reviewCount: 0 // Placeholder
-          }));
-          setProducts(mappedProducts);
-        } else {
-             // Fallback to dummy data if DB is empty so the site doesn't look broken initially
-             // Or keep it empty. User said "cant see it", implying they expect to see *their* products.
-             // Better to show empty state or just their products if any exist.
-             // If DB is empty, user might think it's broken if they expect the dummy data.
-             // But usually once DB is connected, we want real data.
-             // Let's stick to real data for "products" state, but maybe fallback if loading fails?
-             // No, let's show real data.
+             isSale: false,
+             rating: 5,
+             reviewCount: 0
+           }));
+           setProducts(mappedProducts);
+         } else {
              setProducts([]); 
-        }
+         }
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {
@@ -116,6 +118,9 @@ export default function ShopPage({ user }: ShopPageProps) {
   };
 
   const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const filteredProducts = selectedCategory
+    ? products.filter((product) => product.category.toLowerCase().includes(selectedCategory))
+    : products;
 
   return (
     <div className="min-h-screen bg-white">
@@ -138,7 +143,14 @@ export default function ShopPage({ user }: ShopPageProps) {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {CATEGORIES.map(cat => (
-              <div key={cat.id} className="group relative aspect-[3/4] overflow-hidden cursor-pointer rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300">
+              <div
+                key={cat.id}
+                className="group relative aspect-[3/4] overflow-hidden cursor-pointer rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300"
+                onClick={() => {
+                  setSelectedCategory(cat.name.toLowerCase());
+                  document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
                 <img
                   src={cat.image}
                   alt={cat.name}
@@ -159,7 +171,7 @@ export default function ShopPage({ user }: ShopPageProps) {
         </section>
 
         {/* Trending Products Section */}
-        <section className="py-16 bg-gray-50 rounded-t-[3rem]">
+        <section id="products-section" className="py-16 bg-gray-50 rounded-t-[3rem]">
           <div className="container mx-auto px-4 max-w-[1400px]">
             <div className="flex justify-between items-end mb-10 lg:mb-14">
               <div>
@@ -168,9 +180,9 @@ export default function ShopPage({ user }: ShopPageProps) {
                   Trending Now
                 </h2>
               </div>
-              <a href="#" className="hidden lg:block text-black font-bold uppercase tracking-widest text-sm border-b-2 border-black pb-1 hover:text-gray-600 hover:border-gray-600 transition-colors">
-                View All Products
-              </a>
+              <Link to="/" className="hidden lg:block text-black font-bold uppercase tracking-widest text-sm border-b-2 border-black pb-1 hover:text-gray-600 hover:border-gray-600 transition-colors">
+                {selectedCategory ? 'Clear Filter' : 'View All Products'}
+              </Link>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-10 md:gap-x-6">
@@ -179,8 +191,8 @@ export default function ShopPage({ user }: ShopPageProps) {
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
                   <p className="text-gray-500 font-medium">Loading products...</p>
                 </div>
-              ) : products.length > 0 ? (
-                products.map((product) => (
+              ) : filteredProducts.length > 0 ? (
+                filteredProducts.map((product) => (
                   <ProductCard
                     key={product.id}
                     product={product}
@@ -189,15 +201,15 @@ export default function ShopPage({ user }: ShopPageProps) {
                 ))
               ) : (
                 <div className="col-span-full py-20 text-center text-gray-500 font-medium">
-                  No products found. Be the first to add one!
+                  No products found for this category.
                 </div>
               )}
             </div>
 
             <div className="mt-16 text-center lg:hidden">
-              <button className="bg-black text-white px-10 py-4 uppercase tracking-widest text-sm font-bold rounded-full w-full shadow-lg">
-                View All Products
-              </button>
+              <Link to="/" className="inline-block bg-black text-white px-10 py-4 uppercase tracking-widest text-sm font-bold rounded-full w-full shadow-lg">
+                {selectedCategory ? 'Clear Filter' : 'View All Products'}
+              </Link>
             </div>
           </div>
         </section>
@@ -227,7 +239,9 @@ export default function ShopPage({ user }: ShopPageProps) {
 
       {/* WhatsApp Button (Floating) */}
       <a
-        href="#"
+        href="https://wa.me/919999999999"
+        target="_blank"
+        rel="noreferrer"
         className="fixed bottom-24 right-4 lg:bottom-10 lg:right-10 bg-black text-white border border-white/20 p-4 rounded-full shadow-2xl z-30 hover:scale-110 transition-transform flex items-center justify-center"
         aria-label="Chat on WhatsApp"
       >

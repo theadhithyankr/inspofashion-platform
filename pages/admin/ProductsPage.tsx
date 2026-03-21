@@ -11,7 +11,11 @@ type Product = Database['public']['Tables']['products']['Row'];
 export default function ProductsPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [page, setPage] = useState(1);
+    const ITEMS_PER_PAGE = 20;
+    const [hasMore, setHasMore] = useState(true);
     
     // Selection state
     const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
@@ -23,20 +27,48 @@ export default function ProductsPage() {
 
     useEffect(() => {
         fetchProducts();
-    }, []);
+    }, [page]);
 
     async function fetchProducts() {
         try {
             setLoading(true);
-            const { data, error } = await supabase
+            setError(null);
+            const from = (page - 1) * ITEMS_PER_PAGE;
+            const to = from + ITEMS_PER_PAGE - 1;
+
+            const timeoutPromise = new Promise<never>((_, reject) =>
+                setTimeout(() => reject(new Error('Request timed out. Your Supabase project may be paused or unreachable.')), 10000)
+            );
+
+            const fetchPromise = supabase
                 .from('products')
                 .select('*')
-                .order('created_at', { ascending: false });
+                .order('created_at', { ascending: false })
+                .range(from, to);
+
+            const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
 
             if (error) throw error;
-            setProducts(data || []);
-        } catch (error) {
-            console.error('Error fetching products:', error);
+            
+            if (data) {
+                if (data.length < ITEMS_PER_PAGE) {
+                    setHasMore(false);
+                } else {
+                    setHasMore(true);
+                }
+                
+                if (page === 1) {
+                    setProducts(data);
+                } else {
+                    setProducts(prev => {
+                        const newProducts = data.filter(d => !prev.some(p => p.id === d.id));
+                        return [...prev, ...newProducts];
+                    });
+                }
+            }
+        } catch (err: any) {
+            console.error('Error fetching products:', err);
+            setError(err?.message || 'Failed to load products. Check your Supabase connection.');
         } finally {
             setLoading(false);
         }
@@ -159,8 +191,15 @@ export default function ProductsPage() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
-                                {loading ? (
+                                {loading && products.length === 0 ? (
                                     <tr><td colSpan={7} className="py-8 text-center text-gray-400">Loading products...</td></tr>
+                                ) : error ? (
+                                    <tr><td colSpan={7} className="py-8 text-center text-red-500">
+                                        <div className="flex flex-col items-center gap-2">
+                                            <span>⚠️ {error}</span>
+                                            <button onClick={() => fetchProducts()} className="text-sm text-blue-600 underline">Retry</button>
+                                        </div>
+                                    </td></tr>
                                 ) : filteredProducts.length === 0 ? (
                                     <tr><td colSpan={7} className="py-8 text-center text-gray-400">No products found.</td></tr>
                                 ) : (
@@ -218,6 +257,18 @@ export default function ProductsPage() {
                                 )}
                             </tbody>
                         </table>
+                        
+                        {hasMore && !loading && (
+                            <div className="p-4 flex justify-center border-t border-gray-100">
+                                <button
+                                    onClick={() => setPage(p => p + 1)}
+                                    className="px-6 py-2 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors"
+                                >
+                                    Load More
+                                </button>
+                            </div>
+                        )}
+                        
                     </div>
                  </div>
             </main>

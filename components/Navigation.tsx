@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, Search, ShoppingBag, User, Heart, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface NavigationProps {
   onCartOpen: () => void;
@@ -11,6 +12,7 @@ interface NavigationProps {
 const Navigation: React.FC<NavigationProps> = ({ onCartOpen, cartCount, user, onUserClick }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const categoryLink = (category: string) => `/?category=${encodeURIComponent(category)}#products-section`;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,16 +45,16 @@ const Navigation: React.FC<NavigationProps> = ({ onCartOpen, cartCount, user, on
 
             {/* Desktop Left: Logo */}
             <div className="flex items-center gap-8">
-              <div className="text-2xl lg:text-3xl font-bold tracking-tighter text-white font-display cursor-pointer select-none">
+              <Link to="/" className="text-2xl lg:text-3xl font-bold tracking-tighter text-white font-display cursor-pointer select-none">
                 INSPO<span className="font-light">FASHIONS</span>
-              </div>
+              </Link>
 
               {/* Desktop Menu Links */}
               <div className="hidden lg:flex items-center gap-8 text-sm font-medium tracking-wide text-white/90">
-                <a href="#" className="hover:text-white hover:underline decoration-white underline-offset-4 transition-all">WOMEN</a>
-                <a href="#" className="hover:text-white hover:underline decoration-white underline-offset-4 transition-all">MEN</a>
-                <a href="#" className="hover:text-white hover:underline decoration-white underline-offset-4 transition-all font-bold">SALE</a>
-                <a href="#" className="hover:text-white hover:underline decoration-white underline-offset-4 transition-all">NEW IN</a>
+                <Link to={categoryLink('women')} className="hover:text-white hover:underline decoration-white underline-offset-4 transition-all">WOMEN</Link>
+                <Link to={categoryLink('men')} className="hover:text-white hover:underline decoration-white underline-offset-4 transition-all">MEN</Link>
+                <Link to={categoryLink('sale')} className="hover:text-white hover:underline decoration-white underline-offset-4 transition-all font-bold">SALE</Link>
+                <Link to={categoryLink('new')} className="hover:text-white hover:underline decoration-white underline-offset-4 transition-all">NEW IN</Link>
               </div>
             </div>
 
@@ -119,11 +121,11 @@ const Navigation: React.FC<NavigationProps> = ({ onCartOpen, cartCount, user, on
 
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             <div className="space-y-4 text-2xl font-bold font-display tracking-wider">
-              <a href="#" className="block py-2 border-b border-white/10">WOMEN</a>
-              <a href="#" className="block py-2 border-b border-white/10">MEN</a>
-              <a href="#" className="block py-2 border-b border-white/10 font-bold">SALE</a>
-              <a href="#" className="block py-2 border-b border-white/10">NEW ARRIVALS</a>
-              <a href="#" className="block py-2 border-b border-white/10">CURVE + PLUS</a>
+              <Link to={categoryLink('women')} onClick={() => setIsMobileMenuOpen(false)} className="block py-2 border-b border-white/10">WOMEN</Link>
+              <Link to={categoryLink('men')} onClick={() => setIsMobileMenuOpen(false)} className="block py-2 border-b border-white/10">MEN</Link>
+              <Link to={categoryLink('sale')} onClick={() => setIsMobileMenuOpen(false)} className="block py-2 border-b border-white/10 font-bold">SALE</Link>
+              <Link to={categoryLink('new')} onClick={() => setIsMobileMenuOpen(false)} className="block py-2 border-b border-white/10">NEW ARRIVALS</Link>
+              <Link to={categoryLink('curve')} onClick={() => setIsMobileMenuOpen(false)} className="block py-2 border-b border-white/10">CURVE + PLUS</Link>
             </div>
 
             <div className="pt-6 space-y-4">
