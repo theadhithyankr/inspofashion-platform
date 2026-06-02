@@ -1,20 +1,38 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Inspo Fashion Platform
 
-# Run and deploy Inspofashions
+Full-stack Inspo Fashion e-commerce platform with storefront, admin tools, Supabase data, and product management.
 
-This contains everything you need to run your app locally.
+## Key Features
+- Full-stack Inspo Fashion e-commerce platform with storefront, admin tools, Supabase data, and product management
+- Supabase integration is called out for the data, auth, or application state layer present in the codebase.
+- Includes management-facing screens such as admin, dashboard, or coordinator workflows where present.
+- Organized UI components and screens make the main user flows visible from the project structure.
+- Package scripts provide reproducible development, build, and preview commands.
 
-## Run Locally
+## Tech Stack
+- JavaScript/TypeScript
+- React
+- Vite
+- Supabase
+- HTML/CSS
 
-**Prerequisites:**  Node.js
+## Project Structure
+- components - reusable UI and workflow components.
 
+## Setup and Run
+```bash
+git clone https://github.com/theadhithyankr/inspofashion-platform.git
+cd inspofashion-platform
+npm install
+npm run dev
+npm run build
+npm run preview
+```
 
-1. Install dependencies:
-   `npm install`
-2. Create a `.env.local` file in the project root and set:
-   - `VITE_SUPABASE_URL=your_supabase_project_url`
-   - `VITE_SUPABASE_ANON_KEY=your_supabase_anon_key`
-3. Run the app:
-   `npm run dev`
+## What This Project Demonstrates
+- Building user-facing web applications with component-based UI and modern frontend tooling.
+- Integrating managed backend services for auth, persistence, realtime data, or app infrastructure.
+- Presenting project scope, setup, and technical choices clearly for reviewers and recruiters.
+
+## Repository
+- GitHub: https://github.com/theadhithyankr/inspofashion-platform
