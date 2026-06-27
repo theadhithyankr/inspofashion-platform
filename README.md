@@ -14,7 +14,7 @@ Platform layer for coordinating storefront and admin workflows for the InspoFash
 
 InspoFashion Platform is a fashion platform project in the TheAdhithyanKR/inspofashion-platform repository. Full-stack Inspo Fashion e-commerce platform with storefront, admin tools, Supabase data, and product management.
 
-The README was written from the repository contents, including its manifest files, source tree, and available project metadata. The primary manifest is $(@{Path=admin/package.json; Json=}.Path), and the commands below are taken from its scripts.
+The README was written from the repository contents, including its manifest files, source tree, and available project metadata. The primary manifest is `admin/package.json`, and the commands below are taken from its scripts.
 
 ## Key Features
 
