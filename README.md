@@ -1,38 +1,80 @@
-# Inspo Fashion Platform
+<div align="center">
 
-Full-stack Inspo Fashion e-commerce platform with storefront, admin tools, Supabase data, and product management.
+# InspoFashion Platform
+
+Platform layer for coordinating storefront and admin workflows for the InspoFashion brand.
+
+![Next.js](https://img.shields.io/badge/Next.js-black?logo=nextdotjs) ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white) ![React](https://img.shields.io/badge/React-20232A?logo=react) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)
+
+[Repository](https://github.com/theadhithyankr/inspofashion-platform)
+
+</div>
+
+## Overview
+
+InspoFashion Platform is a fashion platform project in the TheAdhithyanKR/inspofashion-platform repository. Full-stack Inspo Fashion e-commerce platform with storefront, admin tools, Supabase data, and product management.
+
+The README was written from the repository contents, including its manifest files, source tree, and available project metadata. The primary manifest is $(System.Collections.Hashtable.Path), and the commands below are taken from its scripts.
 
 ## Key Features
-- Full-stack Inspo Fashion e-commerce platform with storefront, admin tools, Supabase data, and product management
-- Supabase integration is called out for the data, auth, or application state layer present in the codebase.
-- Includes management-facing screens such as admin, dashboard, or coordinator workflows where present.
-- Organized UI components and screens make the main user flows visible from the project structure.
-- Package scripts provide reproducible development, build, and preview commands.
+
+- Shared commerce platform foundation
+- Project layout for combining customer and operator workflows
+- Reusable frontend patterns for brand-specific experiences
+- Deployment-friendly application structure
 
 ## Tech Stack
-- JavaScript/TypeScript
-- React
+
+- Next.js
 - Vite
-- Supabase
-- HTML/CSS
+- React
+- Tailwind CSS
 
 ## Project Structure
-- components - reusable UI and workflow components.
 
-## Setup and Run
-```bash
-git clone https://github.com/theadhithyankr/inspofashion-platform.git
-cd inspofashion-platform
+`	ext
+.
+|-- admin/eslint.config.mjs
+|-- admin/next.config.ts
+|-- admin/package.json
+|-- admin/package-lock.json
+|-- admin/postcss.config.mjs
+|-- admin/README.md
+|-- admin/tsconfig.json
+|-- App.tsx
+|-- check_admin.js
+|-- components/CartDrawer.tsx
+|-- components/Footer.tsx
+|-- components/Hero.tsx
+|-- components/MobileBottomNav.tsx
+|-- components/Navigation.tsx
+|-- components/ProductCard.tsx
+|-- comprehensive_profile_fix.sql
+|-- constants.ts
+|-- create_profile_trigger.sql
+|-- debug_storage.html
+|-- fix_permissions.sql
+|-- index.html
+|-- index.tsx
+|-- lib/auth.ts
+|-- lib/database.types.ts
+`
+
+## Setup
+
+`ash
+cd admin
 npm install
 npm run dev
-npm run build
-npm run preview
-```
+`
 
 ## What This Project Demonstrates
-- Building user-facing web applications with component-based UI and modern frontend tooling.
-- Integrating managed backend services for auth, persistence, realtime data, or app infrastructure.
-- Presenting project scope, setup, and technical choices clearly for reviewers and recruiters.
 
-## Repository
-- GitHub: https://github.com/theadhithyankr/inspofashion-platform
+- Ability to turn a focused product idea into a working codebase
+- Practical use of the repository's chosen framework and tooling
+- Attention to deployable structure, repeatable setup, and portfolio-ready presentation
+- Project-specific implementation around fashion platform
+
+## Links
+
+- Repository: [https://github.com/theadhithyankr/inspofashion-platform](https://github.com/theadhithyankr/inspofashion-platform)
